@@ -1,0 +1,86 @@
+ CREATE TABLE STUD_MARKS(
+    -> ROLL_NO INT PRIMARY KEY,
+    -> NAME VARCHAR(30),
+    -> TOTAL_MARKS INT);
+    
+ CREATE TABLE RESULT(
+    -> ROLL_NO INT PRIMARY KEY,
+    -> NAME VARCHAR(30),
+    -> CLASS VARCHAR(50));
+
+INSERT INTO STUD_MARKS VALUES
+    -> (101, "ANISHA DESHMUKH", 1300),
+    -> (102, "KARAN SINGH", 830),
+    -> (103, "ANSHIKA KULKARNI", 933),
+    -> (104, "NITIN JADHAV", 900),
+    -> (105, "RIYA MALHOTRA", 1455);
+
+SELECT * FROM STUD_MARKS;
++---------+------------------+-------------+
+| ROLL_NO | NAME             | TOTAL_MARKS |
++---------+------------------+-------------+
+|     101 | ANISHA DESHMUKH  |        1300 |
+|     102 | KARAN SINGH      |         830 |
+|     103 | ANSHIKA KULKARNI |         933 |
+|     104 | NITIN JADHAV     |         900 |
+|     105 | RIYA MALHOTRA    |        1455 |
++---------+------------------+-------------+
+
+DELIMITER //;
+
+CREATE FUNCTION determine_class(total_marks INT)
+RETURNS INT
+BEGIN
+	DECLARE class_val INT;
+	SET class_val = -1;
+	IF total_marks >= 990 AND total_marks <= 1500 THEN
+		SET class_val = 0;
+	ELSEIF total_marks >= 900 AND total_marks <= 989 THEN
+		SET class_val = 1;
+	ELSEIF total_marks >= 825 AND total_marks <= 899 THEN
+		SET class_val = 2;
+	END IF;
+	RETURN (class_val);
+END //;
+
+CREATE PROCEDURE proc_Grade(IN rn INT)
+    BEGIN
+    DECLARE marks INT;
+    DECLARE sname VARCHAR(30);
+    DECLARE class VARCHAR(50);
+    SELECT TOTAL_MARKS INTO marks FROM STUD_MARKS WHERE ROLL_NO = rn;
+    SELECT NAME INTO sname FROM STUD_MARKS WHERE ROLL_NO = rn;
+    IF determine_class(marks) = 0 THEN
+    SET class='DISTINCTION';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    ELSEIF determine_class(marks) = 1 THEN
+    SET class='FIRST CLASS';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    ELSEIF determine_class(marks) = 2 THEN
+    SET class='HIGHER SECOND CLASS';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    END IF;
+    END //;
+
+DELIMITER ;
+
+CALL proc_Grade(101);
+
+CALL proc_Grade(102);
+
+CALL proc_Grade(103);
+
+CALL proc_Grade(104);
+
+CALL proc_Grade(105);
+
+SELECT * FROM RESULT;
++---------+------------------+---------------------+
+| ROLL_NO | NAME             | CLASS               |
++---------+------------------+---------------------+
+|     101 | ANISHA DESHMUKH  | DISTINCTION         |
+|     102 | KARAN SINGH      | HIGHER SECOND CLASS |
+|     103 | ANSHIKA KULKARNI | FIRST CLASS         |
+|     104 | NITIN JADHAV     | FIRST CLASS         |
+|     105 | RIYA MALHOTRA    | DISTINCTION         |
++---------+------------------+---------------------+

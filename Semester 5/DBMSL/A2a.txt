@@ -1,0 +1,242 @@
+CREATE TABLE DEPT(
+    -> DEPT_ID INT PRIMARY KEY,
+    -> DNAME VARCHAR(30),
+    -> DLOC VARCHAR(30));
+
+CREATE TABLE EMPLOYEE(
+    -> EMP_ID INT PRIMARY KEY,
+    -> DEPT_ID INT REFERENCES DEPT(DEPT_ID) ON DELETE CASCADE,
+    -> FNAME VARCHAR(30),
+    -> LNAME VARCHAR(30),
+    -> DESIGNATION VARCHAR(30),
+    -> SALARY DECIMAL(8,2),
+    -> JOIN_DATE DATE);
+    
+ CREATE TABLE PROJECT(
+    -> PROJ_ID INT PRIMARY KEY, 
+    -> DEPT_ID INT REFERENCES DEPT(DEPT_ID) ON DELETE CASCADE, 
+    -> PNAME VARCHAR(30),
+    -> PLOC VARCHAR(30), 
+    -> PCOST DECIMAL(9,2), 
+    -> PYEAR YEAR);
+
+ALTER TABLE EMPLOYEE ADD FOREIGN KEY(DEPT_ID) REFERENCES DEPT(DEPT_ID) ON DELETE CASCADE;
+
+ALTER TABLE PROJECT ADD FOREIGN KEY(DEPT_ID) REFERENCES DEPT(DEPT_ID) ON DELETE CASCADE;
+
+CREATE VIEW EVIEW AS SELECT EMP_ID, FNAME, DESIGNATION FROM EMPLOYEE;
+SELECT * FROM EVIEW;
++--------+---------+-------------+
+| EMP_ID | FNAME   | DESIGNATION |
++--------+---------+-------------+
+|    202 | Anil    | Prof.       |
+|    203 | Sanjana | Principal   |
+|    205 | Pratik  | Ass. Prof.  |
+|    206 | Preeti  | Ass. Prof.  |
+|    207 | Harsh   | Prof.       |
+|    208 | Meena   | Prof.       |
+|    210 | Riya    | HOD         |
++--------+---------+-------------+
+| def           | te31170db    | EVIEW      | select `te31170db`.`EMPLOYEE`.`EMP_ID` AS `EMP_ID`,`te31170db`.`EMPLOYEE`.`FNAME` AS `FNAME`,`te31170db`.`EMPLOYEE`.`DESIGNATION` AS `DESIGNATION` from `te31170db`.`EMPLOYEE` | NONE         | YES          | te31170@% | DEFINER       | latin1               | latin1_swedish_ci  
+
+CREATE VIEW PDVIEW AS SELECT P.PROJ_ID, P.PNAME, D.DEPT_ID, D.DNAME FROM DEPT D JOIN PROJECT P ON D.DEPT_ID = P.DEPT_ID;
+SELECT * FROM PDVIEW;
++---------+----------+---------+------------+
+| PROJ_ID | PNAME    | DEPT_ID | DNAME      |
++---------+----------+---------+------------+
+|     302 | SECURITY |     102 | IT         |
+|     308 | WEB DEV  |     102 | IT         |
+|     301 | ML       |     105 | Electrical |
+|     305 | AI       |     105 | Electrical |
+|     307 | APP DEV  |     105 | Electrical |
+|     306 | AI       |     106 | Physics    |
+|     304 | ML       |     107 | Chemistry  |
+|     303 | DEV OPS  |     109 | Biology    |
++---------+----------+---------+------------+
+| def           | te31170db    | PDVIEW     | select `P`.`PROJ_ID` AS `PROJ_ID`,`P`.`PNAME` AS `PNAME`,`D`.`DEPT_ID` AS `DEPT_ID`,`D`.`DNAME` AS `DNAME` from (`te31170db`.`DEPT` `D` join `te31170db`.`PROJECT` `P` on((`D`.`DEPT_ID` = `P`.`DEPT_ID`))) | NONE         | YES          | te31170@% | DEFINER       | latin1               | latin1_swedish_ci    |
+
+CREATE INDEX EINDEX ON EMPLOYEE(EMP_ID, FNAME);
+
+EXPLAIN SELECT PROJ_ID, PNAME FROM PDVIEW WHERE PROJ_ID = 302;
++------+-------------+-------+-------+------------------------+---------+---------+-------+------+-------------+
+| id   | select_type | table | type  | possible_keys          | key     | key_len | ref   | rows | Extra       |
++------+-------------+-------+-------+------------------------+---------+---------+-------+------+-------------+
+|    1 | SIMPLE      | P     | const | PRIMARY,PINDEX,DEPT_ID | PRIMARY | 4       | const |    1 |             |
+|    1 | SIMPLE      | D     | const | PRIMARY                | PRIMARY | 4       | const |    1 | Using index |
++------+-------------+-------+-------+------------------------+---------+---------+-------+------+-------------+
+2 rows in set (0.00 sec)
+
+CREATE UNIQUE INDEX PINDEX ON PROJECT(PROJ_ID, PNAME);
+
+EXPLAIN SELECT PROJ_ID, PNAME FROM PROJECT WHERE PROJ_ID = 302;
++------+-------------+---------+-------+----------------+---------+---------+-------+------+-------+
+| id   | select_type | table   | type  | possible_keys  | key     | key_len | ref   | rows | Extra |
++------+-------------+---------+-------+----------------+---------+---------+-------+------+-------+
+|    1 | SIMPLE      | PROJECT | const | PRIMARY,PINDEX | PRIMARY | 4       | const |    1 |       |
++------+-------------+---------+-------+----------------+---------+---------+-------+------+-------+
+1 row in set (0.00 sec)
+
+1. INSERT INTO DEPT VALUES
+    -> (101, "Computer", "Mumbai"),
+    -> (102, "IT", "Pune"),
+    -> (103, "ENTC", "Delhi"),
+    -> (104, "Mechanical", "Mumbai"),
+    -> (105, "Electrical", "Pune"),
+    -> (106, "Physics", "Delhi"),
+    -> (107, "Chemistry", "Bengaluru"),
+    -> (108, "Mathematics", "Bengaluru"),
+    -> (109, "Biology", "Pune"),
+    -> (110, "English", "Mumbai");
+
+INSERT INTO EMPLOYEE VALUES    
+    -> (201, 101, "Riya", "Kulkarni", "Ass. Prof.", 50000.00, '2002-06-11'),
+    -> (202, 105, "Anil", "Chaudhary", "Prof.", 70000.00, '2005-07-25');
+    -> (203, 102, "Sanjana", "Sinha", "Principal", 120000.00, '2006-12-03'),
+    -> (204, 110, "Gauri", "Jain", "Ass. Prof.", 50000.00, '2010-04-12'),
+    -> (205, 102, "Pratik", "Maheshwari", "Ass. Prof.", 50000.00, '2015-11-01'),
+    -> (206, 109, "Preeti", "Banerjee", "Ass. Prof.", 50000.00, '2020-11-01'),
+    -> (207, 108, "Harsh", "Bansod", "Prof.", 70000.00, '2017-03-18'),
+    -> (208, 106, "Meena", "Hedge", "Prof.", 70000.00, '2017-03-17'),
+    -> (209, 104, "Sanjay", "Patil", "HOD", 80000.00, '2005-05-27'),
+    -> (210, 107, "Riya", "Singh", "HOD", 80000.00, '2005-05-21');
+    
+ INSERT INTO PROJECT VALUES
+    -> (301, 105, "ML", "Mumbai", 500000, 2012),
+    -> (302, 102, "SECURITY", "Pune", 1000000, 2009),
+    -> (303, 109, "DEV OPS", "Mumbai", 1000000, 2002),
+    -> (304, 107, "ML", "Delhi", 250000, 2017),
+    -> (305, 105, "AI", "Hyderabad", 780000, 2005),
+    -> (306, 106, "AI", "Kochi", 500000, 2008),
+    -> (307, 105, "APP DEV", "Mumbai", 1000000, 2012),
+    -> (308, 102, "WEB DEV", "Bengaluru", 300000, 2006),
+    -> (309, 101, "AI", "Chennai", 750000, 2020),
+    -> (310, 110, "ML", "Pune", 500000, 2022);
+
+ 2. SELECT * FROM EMPLOYEE INNER JOIN DEPT ON (EMPLOYEE.DEPT_ID = DEPT.DEPT_ID) WHERE (DNAME LIKE "Computer" OR DNAME LIKE "IT") AND (FNAME
+ LIKE "P%" OR FNAME LIKE "H%");
++--------+---------+--------+------------+-------------+----------+------------+---------+-------+------+
+| EMP_ID | DEPT_ID | FNAME  | LNAME      | DESIGNATION | SALARY   | JOIN_DATE  | DEPT_ID | DNAME | DLOC |
++--------+---------+--------+------------+-------------+----------+------------+---------+-------+------+
+|    205 |     102 | Pratik | Maheshwari | Ass. Prof.  | 50000.00 | 2015-11-01 |     102 | IT    | Pune |
++--------+---------+--------+------------+-------------+----------+------------+---------+-------+------+
+
+ 3. SELECT COUNT(DISTINCT DESIGNATION) FROM EMPLOYEE;
++-----------------------------+
+| COUNT(DISTINCT DESIGNATION) |
++-----------------------------+
+|                           4 |
++-----------------------------+
+
+ 4. SELECT * FROM EMPLOYEE;
++--------+---------+---------+------------+-------------+-----------+------------+
+| EMP_ID | DEPT_ID | FNAME   | LNAME      | DESIGNATION | SALARY    | JOIN_DATE  |
++--------+---------+---------+------------+-------------+-----------+------------+
+|    201 |     101 | Riya    | Kulkarni   | Ass. Prof.  |  50000.00 | 2002-06-11 |
+|    202 |     105 | Anil    | Chaudhary  | Prof.       |  70000.00 | 2005-07-25 |
+|    203 |     102 | Sanjana | Sinha      | Principal   | 120000.00 | 2006-12-03 |
+|    204 |     110 | Gauri   | Jain       | Ass. Prof.  |  50000.00 | 2010-04-12 |
+|    205 |     102 | Pratik  | Maheshwari | Ass. Prof.  |  50000.00 | 2015-11-01 |
+|    206 |     109 | Preeti  | Banerjee   | Ass. Prof.  |  50000.00 | 2020-11-01 |
+|    207 |     108 | Harsh   | Bansod     | Prof.       |  70000.00 | 2017-03-18 |
+|    208 |     106 | Meena   | Hedge      | Prof.       |  70000.00 | 2017-03-17 |
+|    209 |     104 | Sanjay  | Patil      | HOD         |  80000.00 | 2005-05-27 |
+|    210 |     107 | Riya    | Singh      | HOD         |  80000.00 | 2005-05-21 |
++--------+---------+---------+------------+-------------+-----------+------------+
+
+UPDATE EMPLOYEE SET SALARY = SALARY + SALARY*0.1 WHERE JOIN_DATE < '2015-01-01';
+
+SELECT * FROM EMPLOYEE;
++--------+---------+---------+------------+-------------+-----------+------------+
+| EMP_ID | DEPT_ID | FNAME   | LNAME      | DESIGNATION | SALARY    | JOIN_DATE  |
++--------+---------+---------+------------+-------------+-----------+------------+
+|    201 |     101 | Riya    | Kulkarni   | Ass. Prof.  |  55000.00 | 2002-06-11 |
+|    202 |     105 | Anil    | Chaudhary  | Prof.       |  77000.00 | 2005-07-25 |
+|    203 |     102 | Sanjana | Sinha      | Principal   | 132000.00 | 2006-12-03 |
+|    204 |     110 | Gauri   | Jain       | Ass. Prof.  |  55000.00 | 2010-04-12 |
+|    205 |     102 | Pratik  | Maheshwari | Ass. Prof.  |  50000.00 | 2015-11-01 |
+|    206 |     109 | Preeti  | Banerjee   | Ass. Prof.  |  50000.00 | 2020-11-01 |
+|    207 |     108 | Harsh   | Bansod     | Prof.       |  70000.00 | 2017-03-18 |
+|    208 |     106 | Meena   | Hedge      | Prof.       |  70000.00 | 2017-03-17 |
+|    209 |     104 | Sanjay  | Patil      | HOD         |  88000.00 | 2005-05-27 |
+|    210 |     107 | Riya    | Singh      | HOD         |  88000.00 | 2005-05-21 |
++--------+---------+---------+------------+-------------+-----------+------------+
+ 
+ 5. SELECT * FROM DEPT;
++---------+-------------+-----------+
+| DEPT_ID | DNAME       | DLOC      |
++---------+-------------+-----------+
+|     101 | Computer    | Mumbai    |
+|     102 | IT          | Pune      |
+|     103 | ENTC        | Delhi     |
+|     104 | Mechanical  | Mumbai    |
+|     105 | Electrical  | Pune      |
+|     106 | Physics     | Delhi     |
+|     107 | Chemistry   | Bengaluru |
+|     108 | Mathematics | Bengaluru |
+|     109 | Biology     | Pune      |
+|     110 | English     | Mumbai    |
++---------+-------------+-----------+
+
+DELETE FROM DEPT WHERE DLOC = "Mumbai";
+
+SELECT * FROM DEPT;
++---------+-------------+-----------+
+| DEPT_ID | DNAME       | DLOC      |
++---------+-------------+-----------+
+|     102 | IT          | Pune      |
+|     103 | ENTC        | Delhi     |
+|     105 | Electrical  | Pune      |
+|     106 | Physics     | Delhi     |
+|     107 | Chemistry   | Bengaluru |
+|     108 | Mathematics | Bengaluru |
+|     109 | Biology     | Pune      |
++---------+-------------+-----------+
+
+ 6. SELECT PNAME FROM PROJECT WHERE PLOC LIKE "PUNE";
++----------+
+| PNAME    |
++----------+
+| SECURITY | 
+| ML       | 
++----------+
+
+ 7. SELECT * FROM PROJECT WHERE PCOST BETWEEN 100000 AND 500000;
++---------+---------+---------+-----------+-----------+-------+
+| PROJ_ID | DEPT_ID | PNAME   | PLOC      | PCOST     | PYEAR |
++---------+---------+---------+-----------+-----------+-------+
+|     301 |     105 | ML      | Mumbai    | 500000.00 |  2012 |
+|     304 |     107 | ML      | Delhi     | 250000.00 |  2017 |
+|     306 |     106 | AI      | Kochi     | 500000.00 |  2008 |
+|     308 |     102 | WEB DEV | Bengaluru | 300000.00 |  2006 |
+|     310 |     110 | ML      | Pune      | 500000.00 |  2022 |
++---------+---------+---------+-----------+-----------+-------+
+
+ 8. SELECT MAX(PCOST), AVG(PCOST) FROM PROJECT;
++------------+---------------+
+| MAX(PCOST) | AVG(PCOST)    |
++------------+---------------+
+| 1000000.00 | 658000.000000 |
++------------+---------------+
+
+ 9. SELECT * FROM EMPLOYEE ORDER BY EMP_ID DESC, FNAME DESC;
++--------+---------+---------+------------+-------------+-----------+------------+
+| EMP_ID | DEPT_ID | FNAME   | LNAME      | DESIGNATION | SALARY    | JOIN_DATE  |
++--------+---------+---------+------------+-------------+-----------+------------+
+|    210 |     107 | Riya    | Singh      | HOD         |  80000.00 | 2005-05-21 |
+|    209 |     104 | Sanjay  | Patil      | HOD         |  80000.00 | 2005-05-27 |
+|    208 |     106 | Meena   | Hedge      | Prof.       |  70000.00 | 2017-03-17 |
+|    207 |     108 | Harsh   | Bansod     | Prof.       |  70000.00 | 2017-03-18 |
+|    206 |     109 | Preeti  | Banerjee   | Ass. Prof.  |  50000.00 | 2020-11-01 |
+|    205 |     102 | Pratik  | Maheshwari | Ass. Prof.  |  50000.00 | 2015-11-01 |
+|    204 |     110 | Gauri   | Jain       | Ass. Prof.  |  50000.00 | 2010-04-12 |
+|    203 |     102 | Sanjana | Sinha      | Principal   | 120000.00 | 2006-12-03 |
+|    202 |     105 | Anil    | Chaudhary  | Prof.       |  70000.00 | 2005-07-25 |
+|    201 |     101 | Riya    | Kulkarni   | Ass. Prof.  |  50000.00 | 2002-06-11 |
++--------+---------+---------+------------+-------------+-----------+------------+
+
+ 10. SELECT PNAME, PLOC, PCOST FROM PROJECT WHERE PYEAR = 2004 OR PYEAR = 2005 OR PYEAR = 2007;
++-------+-----------+-----------+
+| PNAME | PLOC      | PCOST     |
++-------+-----------+-----------+
+| AI    | Hyderabad | 780000.00 |
++-------+-----------+-----------+

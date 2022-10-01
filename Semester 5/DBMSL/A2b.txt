@@ -1,0 +1,291 @@
+CREATE TABLE PLACEMENT_DRIVE(
+    -> DRIVE_ID INT PRIMARY KEY,
+    -> COMP_NAME VARCHAR(30),
+    -> PACKAGE DECIMAL(9,2),
+    -> LOCATION VARCHAR(30));
+   
+ALTER TABLE TRAINING ADD COLUMN S_ID INT AFTER T_ID;
+
+CREATE TABLE TRAINING(
+    -> T_ID INT PRIMARY KEY,
+    -> TCOMP_NAME VARCHAR(30),
+    -> TFEE DECIMAL(9,2),
+    -> TYEAR YEAR);
+
+CREATE TABLE STUDENT(
+    -> S_ID INT,
+    -> DRIVE_ID INT,
+    -> SNAME VARCHAR(30),
+    -> CGPA FLOAT(3,2),
+    -> SBRANCH VARCHAR(30),
+    -> PRIMARY KEY(S_ID),
+    -> FOREIGN KEY(DRIVE_ID) REFERENCES PLACEMENT_DRIVE(DRIVE_ID) ON DELETE CASCADE);
+    
+CREATE VIEW SVIEW AS SELECT S_ID, SNAME, SBRANCH FROM STUDENT;
+
+SELECT * FROM SVIEW;
++------+------------------+----------+
+| S_ID | SNAME            | SBRANCH  |
++------+------------------+----------+
+|  301 | ANKIT BHOSE      | COMPUTER |
+|  302 | YASH TRIPATHI    | IT       |
+|  303 | RIYA KUMAR       | COMPUTER |
+|  304 | SURESH KULKARNI  | ENTC     |
+|  305 | KRITIKA MALHOTRA | IT       |
+|  306 | SHWETHA HEDGE    | COMPUTER |
+|  307 | RONAK JOSHI      | ENTC     |
+|  308 | ANSHIKA SINGH    | IT       |
+|  309 | KUNAL CHATTERJEE | IT       |
+|  310 | VEENA SINGH      | COMPUTER |
++------+------------------+----------+
+
+| def           | te31170db    | SVIEW      | select `te31170db`.`STUDENT`.`S_ID` AS `S_ID`,`te31170db`.`STUDENT`.`SNAME` AS `SNAME`,`te31170db`.`STUDENT`.`SBRANCH` AS `SBRANCH` from `te31170db`.`STUDENT`                                                                     | NONE         | YES          | te31170@% | DEFINER       | latin1               | latin1_swedish_ci    |
+
+CREATE VIEW SPVIEW AS SELECT S.SNAME, S.SBRANCH, P.COMP_NAME, P.LOCATION
+FROM STUDENT S, PLACEMENT_DRIVE P WHERE S.DRIVE_ID = P.DRIVE_ID;
+
+SELECT * FROM SPVIEW;
++------------------+----------+---------------+-----------+
+| SNAME            | SBRANCH  | COMP_NAME     | LOCATION  |
++------------------+----------+---------------+-----------+
+| ANKIT BHOSE      | COMPUTER | MICROSOFT     | HYDERABAD |
+| YASH TRIPATHI    | IT       | L&T           | CHENNAI   |
+| RIYA KUMAR       | COMPUTER | RAKUTEN       | TOKYO     |
+| SURESH KULKARNI  | ENTC     | GOLDMAN SACHS | PUNE      |
+| KRITIKA MALHOTRA | IT       | P&G           | PUNE      |
+| SHWETHA HEDGE    | COMPUTER | DEUTSCHE BANK | MUMBAI    |
+| RONAK JOSHI      | ENTC     | BARCLAYS      | PUNE      |
+| ANSHIKA SINGH    | IT       | PHONEPE       | HYDERABAD |
+| KUNAL CHATTERJEE | IT       | L&T           | CHENNAI   |
+| VEENA SINGH      | COMPUTER | CREDIT SUISSE | BENGALURU |
++------------------+----------+---------------+-----------+
+
+| def           | te31170db    | SPVIEW     | select `S`.`SNAME` AS `SNAME`,`S`.`SBRANCH` AS `SBRANCH`,`P`.`COMP_NAME` AS `COMP_NAME`,`P`.`LOCATION` AS `LOCATION` from `te31170db`.`STUDENT` `S` join `te31170db`.`PLACEMENT_DRIVE` `P` where (`S`.`DRIVE_ID` = `P`.`DRIVE_ID`) | NONE         | YES          | te31170@% | DEFINER       | latin1               | latin1_swedish_ci    |
+
+CREATE INDEX SINDEX ON STUDENT(S_ID, SNAME, CGPA);
+EXPLAIN SELECT SNAME FROM STUDENT WHERE S_ID = 302;
++------+-------------+---------+-------+---------------+---------+---------+-------+------+-------+
+| id   | select_type | table   | type  | possible_keys | key     | key_len | ref   | rows | Extra |
++------+-------------+---------+-------+---------------+---------+---------+-------+------+-------+
+|    1 | SIMPLE      | STUDENT | const | PRIMARY       | PRIMARY | 4       | const |    1 |       |
++------+-------------+---------+-------+---------------+---------+---------+-------+------+-------+
+1 row in set (0.00 sec)
+
+CREATE UNIQUE INDEX SINDEX ON STUDENT(SNAME, SBRANCH);
+EXPLAIN SELECT SNAME FROM SPVIEW;
++------+-------------+-------+--------+---------------+---------+---------+----------------------+------+-------------+
+| id   | select_type | table | type   | possible_keys | key     | key_len | ref                  | rows | Extra       |
++------+-------------+-------+--------+---------------+---------+---------+----------------------+------+-------------+
+|    1 | SIMPLE      | S     | ALL    | DRIVE_ID      | NULL    | NULL    | NULL                 |   16 | Using where |
+|    1 | SIMPLE      | P     | eq_ref | PRIMARY       | PRIMARY | 4       | te31170db.S.DRIVE_ID |    1 | Using index |
++------+-------------+-------+--------+---------------+---------+---------+----------------------+------+-------------+
+2 rows in set (0.00 sec)
+
+1. INSERT INTO TRAINING VALUES
+    -> (101, "TRAINEDU", 30000.00, 2020),
+    -> (102, "TRAIN123", 40000.00, 2015),
+    -> (103, "PLACEMENTTRAIN", 20000.00, 2019),
+    -> (104, "COMPANYTRAIN", 50000.00, 2017),
+    -> (105, "TRAINING4STUDENTS", 40000.00, 2019),
+    -> (106, "PLACEMENTS101", 35000.00, 2016),
+    -> (107, "TRAIN&PLACE", 35000.00, 2018),
+    -> (108, "PERFECTPLACEMENTS", 25000.00, 2017),
+    -> (109, "TRAINING4U", 22000.00, 2016),
+    -> (110, "TRAINING4ABETTERFUTURE", 32000.00, 2020);
+    
+   SELECT * FROM TRAINING;
+	+------+------------------------+----------+-------+
+	| T_ID | TCOMP_NAME             | TFEE     | TYEAR |
+	+------+------------------------+----------+-------+
+	|  101 | TRAINEDU               | 30000.00 |  2020 |
+	|  102 | TRAIN123               | 40000.00 |  2015 |
+	|  103 | PLACEMENTTRAIN         | 20000.00 |  2019 |
+	|  104 | COMPANYTRAIN           | 50000.00 |  2017 |
+	|  105 | TRAINING4STUDENTS      | 40000.00 |  2019 |
+	|  106 | PLACEMENTS101          | 35000.00 |  2016 |
+	|  107 | TRAIN&PLACE            | 35000.00 |  2018 |
+	|  108 | PERFECTPLACEMENTS      | 25000.00 |  2017 |
+	|  109 | TRAINING4U             | 22000.00 |  2016 |
+	|  110 | TRAINING4ABETTERFUTURE | 32000.00 |  2020 |
+	+------+------------------------+----------+-------+
+
+   UPDATE TRAINING SET S_ID = 304 WHERE T_ID = 102;
+   UPDATE TRAINING SET S_ID = 304 WHERE T_ID = 102;
+   UPDATE TRAINING SET S_ID = 309 WHERE T_ID = 103;
+   UPDATE TRAINING SET S_ID = 303 WHERE T_ID = 104;
+   UPDATE TRAINING SET S_ID = 305 WHERE T_ID = 105;
+   UPDATE TRAINING SET S_ID = 302 WHERE T_ID = 106;
+   UPDATE TRAINING SET S_ID = 301 WHERE T_ID = 107;
+   UPDATE TRAINING SET S_ID = 310 WHERE T_ID = 108;
+   UPDATE TRAINING SET S_ID = 309 WHERE T_ID = 109;
+   UPDATE TRAINING SET S_ID = 306 WHERE T_ID = 110;
+
+   SELECT * FROM TRAINING;
+	+------+------+------------------------+----------+-------+
+	| T_ID | S_ID | TCOMP_NAME             | TFEE     | TYEAR |
+	+------+------+------------------------+----------+-------+
+	|  101 |  307 | TRAINEDU               | 30000.00 |  2020 |
+	|  102 |  304 | TRAIN123               | 40000.00 |  2015 |
+	|  103 |  309 | PLACEMENTTRAIN         | 23000.00 |  2019 |
+	|  104 |  303 | COMPANYTRAIN           | 50000.00 |  2017 |
+	|  105 |  305 | TRAINING4STUDENTS      | 46000.00 |  2019 |
+	|  106 |  302 | PLACEMENTS101          | 35000.00 |  2016 |
+	|  107 |  301 | TRAIN&PLACE            | 35000.00 |  2018 |
+	|  108 |  310 | PERFECTPLACEMENTS      | 25000.00 |  2017 |
+	|  109 |  309 | TRAINING4U             | 22000.00 |  2016 |
+	|  110 |  306 | TRAINING4ABETTERFUTURE | 32000.00 |  2020 |
+	+------+------+------------------------+----------+-------+
+
+    
+   INSERT INTO PLACEMENT_DRIVE VALUES
+    -> (201, "PHONEPE", 3000000.00, "HYDERABAD"),
+    -> (202, "RAKUTEN", 3700000.00, "TOKYO"),
+    -> (203, "BARCLAYS", 1200000.00, "PUNE"),
+    -> (204, "CREDIT SUISSE", 2000000.00, "BENGALURU"),
+    -> (205, "L&T", 1500000.00, "CHENNAI"),
+    -> (206, "AMAZON", 6500000.00, "BENGALURU"),
+    -> (207, "P&G", 1500000.00, "PUNE"),
+    -> (208, "MICROSOFT", 4000000.00, "HYDERABAD"),
+    -> (209, "DEUTSCHE BANK", 2000000.00, "MUMBAI"),
+    -> (210, "GOLDMAN SACHS", 2500000.00, "PUNE");
+    
+   SELECT * FROM PLACEMENT_DRIVE;
+	+----------+---------------+------------+-----------+
+	| DRIVE_ID | COMP_NAME     | PACKAGE    | LOCATION  |
+	+----------+---------------+------------+-----------+
+	|      201 | PHONEPE       | 3000000.00 | HYDERABAD |
+	|      202 | RAKUTEN       | 3700000.00 | TOKYO     |
+	|      203 | BARCLAYS      | 1200000.00 | PUNE      |
+	|      204 | CREDIT SUISSE | 2000000.00 | BENGALURU |
+	|      205 | L&T           | 1500000.00 | CHENNAI   |
+	|      206 | AMAZON        | 6500000.00 | BENGALURU |
+	|      207 | P&G           | 1500000.00 | PUNE      |
+	|      208 | MICROSOFT     | 4000000.00 | HYDERABAD |
+	|      209 | DEUTSCHE BANK | 2000000.00 | MUMBAI    |
+	|      210 | GOLDMAN SACHS | 2500000.00 | PUNE      |
+	+----------+---------------+------------+-----------+
+
+
+   INSERT INTO STUDENT VALUES
+    -> (301, 208, "ANKIT BHOSE", 8.56, "COMPUTER"),
+    -> (302, 205, "YASH TRIPATHI", 7.73, "IT"),
+    -> (303, 202, "RIYA KUMAR", 9.2, "COMPUTER"),
+    -> (304, 210, "SURESH KULKARNI", 9.0, "ENTC"),
+    -> (305, 207, "KRITIKA MALHOTRA", 8.2, "IT"),
+    -> (306, 209, "SHWETHA HEDGE", 8.83, "COMPUTER"),
+    -> (307, 203, "RONAK JOSHI", 6.85, "ENTC"),
+    -> (308, 201, "ANSHIKA SINGH", 7.62, "IT"),
+    -> (309, 205, "KUNAL CHATTERJEE", 6.54, "IT"),
+    -> (310, 204, "VEENA SINGH", 8.22, "COMPUTER");
+   
+   SELECT * FROM STUDENT;
+	+------+----------+------------------+------+----------+
+	| S_ID | DRIVE_ID | SNAME            | CGPA | SBRANCH  |
+	+------+----------+------------------+------+----------+
+	|  301 |      208 | ANKIT BHOSE      | 8.56 | COMPUTER |
+	|  302 |      205 | YASH TRIPATHI    | 7.73 | IT       |
+	|  303 |      202 | RIYA KUMAR       | 9.20 | COMPUTER |
+	|  304 |      210 | SURESH KULKARNI  | 9.00 | ENTC     |
+	|  305 |      207 | KRITIKA MALHOTRA | 8.20 | IT       |
+	|  306 |      209 | SHWETHA HEDGE    | 8.83 | COMPUTER |
+	|  307 |      203 | RONAK JOSHI      | 6.85 | ENTC     |
+	|  308 |      201 | ANSHIKA SINGH    | 7.62 | IT       |
+	|  309 |      205 | KUNAL CHATTERJEE | 6.54 | IT       |
+	|  310 |      204 | VEENA SINGH      | 8.22 | COMPUTER |
+	+------+----------+------------------+------+----------+
+	
+2. SELECT * FROM STUDENT WHERE ((SBRANCH LIKE "COMPUTER") OR (SBRANCH LIKE "IT")) AND ((SNAME LIKE "A%") OR (SNAME LIKE "%D"));
+	+------+----------+---------------+------+----------+
+	| S_ID | DRIVE_ID | SNAME         | CGPA | SBRANCH  |
+	+------+----------+---------------+------+----------+
+	|  301 |      208 | ANKIT BHOSE   | 8.56 | COMPUTER |
+	|  308 |      201 | ANSHIKA SINGH | 7.62 | IT       |
+	+------+----------+---------------+------+----------+
+	
+3. SELECT COUNT(DISTINCT COMP_NAME) FROM PLACEMENT_DRIVE;
+	+---------------------------+
+	| COUNT(DISTINCT COMP_NAME) |
+	+---------------------------+
+	|                        10 |
+	+---------------------------+
+	
+4. UPDATE TRAINING SET TFEE = (TFEE + (0.15*TFEE)) WHERE TYEAR = 2019;
+   SELECT * FROM TRAINING;
+	+------+------------------------+----------+-------+
+	| T_ID | TCOMP_NAME             | TFEE     | TYEAR |
+	+------+------------------------+----------+-------+
+	|  101 | TRAINEDU               | 30000.00 |  2020 |
+	|  102 | TRAIN123               | 40000.00 |  2015 |
+	|  103 | PLACEMENTTRAIN         | 23000.00 |  2019 |
+	|  104 | COMPANYTRAIN           | 50000.00 |  2017 |
+	|  105 | TRAINING4STUDENTS      | 46000.00 |  2019 |
+	|  106 | PLACEMENTS101          | 35000.00 |  2016 |
+	|  107 | TRAIN&PLACE            | 35000.00 |  2018 |
+	|  108 | PERFECTPLACEMENTS      | 25000.00 |  2017 |
+	|  109 | TRAINING4U             | 22000.00 |  2016 |
+	|  110 | TRAINING4ABETTERFUTURE | 32000.00 |  2020 |
+	+------+------------------------+----------+-------+
+	
+5. DELETE FROM PLACEMENT_DRIVE WHERE PACKAGE < 500000;
+
+6. SELECT COMP_NAME FROM PLACEMENT_DRIVE WHERE LOCATION LIKE "PUNE" OR LOCATION LIKE "MUMBAI";
+	+---------------+
+	| COMP_NAME     |
+	+---------------+
+	| BARCLAYS      |
+	| P&G           |
+	| DEUTSCHE BANK |
+	| GOLDMAN SACHS |
+	+---------------+
+	
+7. SELECT SNAME FROM STUDENT INNER JOIN TRAINING ON (STUDENT.S_ID = TRAINING.S_ID) WHERE (TYEAR = 2019 OR TYEAR = 2021);
+	+------------------+
+	| SNAME            |
+	+------------------+
+	| KUNAL CHATTERJEE |
+	| KRITIKA MALHOTRA |
+	+------------------+
+
+8. SELECT SNAME, MAX(CGPA) FROM STUDENT;
+	+-------------+-----------+
+	| SNAME       | MAX(CGPA) |
+	+-------------+-----------+
+	| ANKIT BHOSE |      9.20 |
+	+-------------+-----------+
+
+   SELECT SNAME FROM STUDENT WHERE CGPA BETWEEN 7 AND 9;
+	+------------------+
+	| SNAME            |
+	+------------------+
+	| ANKIT BHOSE      |
+	| YASH TRIPATHI    |
+	| SURESH KULKARNI  |
+	| KRITIKA MALHOTRA |
+	| SHWETHA HEDGE    |
+	| ANSHIKA SINGH    |
+	| VEENA SINGH      |
+	+------------------+
+
+9. SELECT SNAME, T_ID FROM STUDENT INNER JOIN TRAINING ON (STUDENT.S_ID = TRAINING.S_ID) ORDER BY TFEE DESC;
+	+------------------+------+
+	| SNAME            | T_ID |
+	+------------------+------+
+	| RIYA KUMAR       |  104 |
+	| KRITIKA MALHOTRA |  105 |
+	| SURESH KULKARNI  |  102 |
+	| YASH TRIPATHI    |  106 |
+	| ANKIT BHOSE      |  107 |
+	| SHWETHA HEDGE    |  110 |
+	| RONAK JOSHI      |  101 |
+	| VEENA SINGH      |  108 |
+	| KUNAL CHATTERJEE |  103 |
+	| KUNAL CHATTERJEE |  109 |
+	+------------------+------+
+	
+10. SELECT P.COMP_NAME, S.SNAME, P.LOCATION, P.PACKAGE FROM STUDENT S, PLACEMENT_DRIVE P WHERE S.DRIVE_ID = P.DRIVE_ID AND (PACKAGE = 3000000 OR PACKAGE = 4000000 OR PACKAGE = 5000000);
+	+-----------+---------------+-----------+------------+
+	| COMP_NAME | SNAME         | LOCATION  | PACKAGE    |
+	+-----------+---------------+-----------+------------+
+	| MICROSOFT | ANKIT BHOSE   | HYDERABAD | 4000000.00 |
+	| PHONEPE   | ANSHIKA SINGH | HYDERABAD | 3000000.00 |
+	+-----------+---------------+-----------+------------+

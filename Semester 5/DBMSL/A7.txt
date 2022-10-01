@@ -1,0 +1,127 @@
+CREATE TABLE LIBRARY(
+    -> ISBN INT PRIMARY KEY,
+    -> TITLE VARCHAR(30) NOT NULL,
+    -> AUTHOR VARCHAR(30) NOT NULL,
+    -> TOTAL_COPIES INT NOT NULL,
+    -> CHECKED_OUT_COPIES INT);
+
+CREATE TABLE LIBRARY_AUDIT(
+    -> ISBN INT PRIMARY KEY,
+    -> TITLE VARCHAR(30) NOT NULL,
+    -> AUTHOR VARCHAR(30) NOT NULL,
+    -> TOTAL_COPIES INT NOT NULL,
+    -> CHECKED_OUT_COPIES INT);
+
+INSERT INTO LIBRARY VALUES
+    -> (101, "MATILDA", "ROALD DAHL", 10, 5),
+    -> (102, "A TALE OF TWO CITIES", "CHARLES DICKENS", 8, 0),
+    -> (103, "JAVA FOR BEGINNERS", "JOHN SMITH", 3, 3),
+    -> (104, "WAR AND PEACE", "LEO TOLSTOY", 4, 2),
+    -> (105, "PRIDE AND PREJUDICE", "JANE AUSTEN", 4, 1),
+    -> (106, "EMMA", "JANE AUSTEN", 1, 0),
+    -> (107, "CAT IN THE HAT", "DR. SEUSS", 7, 5),
+    -> (108, "HATCHET", "GARY PAULSEN", 3, 1),
+    -> (109, "EVEREST", "GORDON KORMAN", 5, 0),
+    -> (110, "ADVANCED C++ CONCEPTS", "DIANA LEE", 2, 2);
+
+SELECT * FROM LIBRARY;
++------+-----------------------+-----------------+--------------+--------------------+
+| ISBN | TITLE                 | AUTHOR          | TOTAL_COPIES | CHECKED_OUT_COPIES |
++------+-----------------------+-----------------+--------------+--------------------+
+|  101 | MATILDA               | ROALD DAHL      |           10 |                  5 |
+|  102 | A TALE OF TWO CITIES  | CHARLES DICKENS |            8 |                  0 |
+|  103 | JAVA FOR BEGINNERS    | JOHN SMITH      |            3 |                  3 |
+|  104 | WAR AND PEACE         | LEO TOLSTOY     |            4 |                  2 |
+|  105 | PRIDE AND PREJUDICE   | JANE AUSTEN     |            4 |                  1 |
+|  106 | EMMA                  | JANE AUSTEN     |            1 |                  0 |
+|  107 | CAT IN THE HAT        | DR. SEUSS       |            7 |                  5 |
+|  108 | HATCHET               | GARY PAULSEN    |            3 |                  1 |
+|  109 | EVEREST               | GORDON KORMAN   |            5 |                  0 |
+|  110 | ADVANCED C++ CONCEPTS | DIANA LEE       |            2 |                  2 |
++------+-----------------------+-----------------+--------------+--------------------+
+
+DELIMITER //;
+
+CREATE TRIGGER before_library_delete
+BEFORE DELETE
+ON LIBRARY FOR EACH ROW
+BEGIN
+    INSERT INTO LIBRARY_AUDIT(ISBN, TITLE, AUTHOR, TOTAL_COPIES, CHECKED_OUT_COPIES)
+    VALUES(OLD.ISBN, OLD.TITLE, OLD.AUTHOR, OLD.TOTAL_COPIES, OLD.CHECKED_OUT_COPIES);
+END//;   
+
+CREATE TRIGGER before_library_update
+BEFORE UPDATE
+ON LIBRARY FOR EACH ROW
+BEGIN
+    INSERT INTO LIBRARY_AUDIT(ISBN, TITLE, AUTHOR, TOTAL_COPIES, CHECKED_OUT_COPIES)
+    VALUES(OLD.ISBN, OLD.TITLE, OLD.AUTHOR, OLD.TOTAL_COPIES, OLD.CHECKED_OUT_COPIES);
+END//;   
+
+DELIMITER ;
+
+SHOW TRIGGERS;
++-----------------------+--------+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+-----------+----------------------+----------------------+--------------------+
+| Trigger               | Event  | Table   | Statement                                                                                                                                                                             | Timing | Created | sql_mode | Definer   | character_set_client | collation_connection | Database Collation |
++-----------------------+--------+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+-----------+----------------------+----------------------+--------------------+
+| before_library_update | UPDATE | LIBRARY | BEGIN
+    INSERT INTO LIBRARY_AUDIT(ISBN, TITLE, AUTHOR, TOTAL_COPIES, CHECKED_OUT_COPIES)
+    VALUES(OLD.ISBN, OLD.TITLE, OLD.AUTHOR, OLD.TOTAL_COPIES, OLD.CHECKED_OUT_COPIES);
+END | BEFORE | NULL    |          | te31170@% | latin1               | latin1_swedish_ci    | latin1_swedish_ci  |
+| before_library_delete | DELETE | LIBRARY | BEGIN
+    INSERT INTO LIBRARY_AUDIT(ISBN, TITLE, AUTHOR, TOTAL_COPIES, CHECKED_OUT_COPIES)
+    VALUES(OLD.ISBN, OLD.TITLE, OLD.AUTHOR, OLD.TOTAL_COPIES, OLD.CHECKED_OUT_COPIES);
+END | BEFORE | NULL    |          | te31170@% | latin1               | latin1_swedish_ci    | latin1_swedish_ci  |
++-----------------------+--------+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+-----------+----------------------+----------------------+--------------------+
+
+
+UPDATE LIBRARY SET CHECKED_OUT_COPIES = 1 WHERE ISBN = 106;
+
+SELECT * FROM LIBRARY;
++------+-----------------------+-----------------+--------------+--------------------+
+| ISBN | TITLE                 | AUTHOR          | TOTAL_COPIES | CHECKED_OUT_COPIES |
++------+-----------------------+-----------------+--------------+--------------------+
+|  101 | MATILDA               | ROALD DAHL      |           10 |                  5 |
+|  102 | A TALE OF TWO CITIES  | CHARLES DICKENS |            8 |                  0 |
+|  103 | JAVA FOR BEGINNERS    | JOHN SMITH      |            3 |                  3 |
+|  104 | WAR AND PEACE         | LEO TOLSTOY     |            4 |                  2 |
+|  105 | PRIDE AND PREJUDICE   | JANE AUSTEN     |            4 |                  1 |
+|  106 | EMMA                  | JANE AUSTEN     |            1 |                  1 |
+|  107 | CAT IN THE HAT        | DR. SEUSS       |            7 |                  5 |
+|  108 | HATCHET               | GARY PAULSEN    |            3 |                  1 |
+|  109 | EVEREST               | GORDON KORMAN   |            5 |                  0 |
+|  110 | ADVANCED C++ CONCEPTS | DIANA LEE       |            2 |                  2 |
++------+-----------------------+-----------------+--------------+--------------------+
+
+SELECT * FROM LIBRARY_AUDIT;
++------+-------+-------------+--------------+--------------------+
+| ISBN | TITLE | AUTHOR      | TOTAL_COPIES | CHECKED_OUT_COPIES |
++------+-------+-------------+--------------+--------------------+
+|  106 | EMMA  | JANE AUSTEN |            1 |                  0 |
++------+-------+-------------+--------------+--------------------+
+
+DELETE FROM LIBRARY WHERE ISBN = 108;
+
+SELECT * FROM LIBRARY;
++------+-----------------------+-----------------+--------------+--------------------+
+| ISBN | TITLE                 | AUTHOR          | TOTAL_COPIES | CHECKED_OUT_COPIES |
++------+-----------------------+-----------------+--------------+--------------------+
+|  101 | MATILDA               | ROALD DAHL      |           10 |                  5 |
+|  102 | A TALE OF TWO CITIES  | CHARLES DICKENS |            8 |                  0 |
+|  103 | JAVA FOR BEGINNERS    | JOHN SMITH      |            3 |                  3 |
+|  104 | WAR AND PEACE         | LEO TOLSTOY     |            4 |                  2 |
+|  105 | PRIDE AND PREJUDICE   | JANE AUSTEN     |            4 |                  1 |
+|  106 | EMMA                  | JANE AUSTEN     |            1 |                  1 |
+|  107 | CAT IN THE HAT        | DR. SEUSS       |            7 |                  5 |
+|  109 | EVEREST               | GORDON KORMAN   |            5 |                  0 |
+|  110 | ADVANCED C++ CONCEPTS | DIANA LEE       |            2 |                  2 |
++------+-----------------------+-----------------+--------------+--------------------+
+
+SELECT * FROM LIBRARY_AUDIT;
++------+---------+--------------+--------------+--------------------+
+| ISBN | TITLE   | AUTHOR       | TOTAL_COPIES | CHECKED_OUT_COPIES |
++------+---------+--------------+--------------+--------------------+
+|  106 | EMMA    | JANE AUSTEN  |            1 |                  0 |
+|  108 | HATCHET | GARY PAULSEN |            3 |                  1 |
++------+---------+--------------+--------------+--------------------+
+

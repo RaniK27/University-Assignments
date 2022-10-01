@@ -1,0 +1,156 @@
+1. SELECT * FROM EMPLOYEE NATURAL JOIN DEPT;
+
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+| DEPT_ID | EMP_ID | FNAME   | LNAME      | DESIGNATION | SALARY    | JOIN_DATE  | DNAME       | DLOC      |
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+|     105 |    202 | Anil    | Chaudhary  | Prof.       |  77000.00 | 2005-07-25 | Electrical  | Pune      |
+|     102 |    203 | Sanjana | Sinha      | Principal   | 132000.00 | 2006-12-03 | IT          | Pune      |
+|     102 |    205 | Pratik  | Maheshwari | Ass. Prof.  |  50000.00 | 2015-11-01 | IT          | Pune      |
+|     109 |    206 | Preeti  | Banerjee   | Ass. Prof.  |  50000.00 | 2020-11-01 | Biology     | Pune      |
+|     108 |    207 | Harsh   | Bansod     | Prof.       |  70000.00 | 2017-03-18 | Mathematics | Bengaluru |
+|     106 |    208 | Meena   | Hedge      | Prof.       |  70000.00 | 2017-03-17 | Physics     | Delhi     |
+|     107 |    210 | Riya    | Singh      | HOD         |  88000.00 | 2005-05-21 | Chemistry   | Bengaluru |
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+
+2. SELECT E.FNAME, E.DESIGNATION, D.DLOC, E.JOIN_DATE FROM EMPLOYEE E, DEPT D WHERE E.DEPT_ID = D.DEPT_ID;
+
++---------+-------------+-----------+------------+
+| FNAME   | DESIGNATION | DLOC      | JOIN_DATE  |
++---------+-------------+-----------+------------+
+| Anil    | Prof.       | Pune      | 2005-07-25 |
+| Sanjana | Principal   | Pune      | 2006-12-03 |
+| Pratik  | Ass. Prof.  | Pune      | 2015-11-01 |
+| Preeti  | Ass. Prof.  | Pune      | 2020-11-01 |
+| Harsh   | Prof.       | Bengaluru | 2017-03-18 |
+| Meena   | Prof.       | Delhi     | 2017-03-17 |
+| Riya    | HOD         | Bengaluru | 2005-05-21 |
++---------+-------------+-----------+------------+
+
+3. SELECT EMP_ID, FNAME, LNAME, PROJ_ID, PCOST FROM EMPLOYEE, PROJECT WHERE EMPLOYEE.DEPT_ID = PROJECT.DEPT_ID AND PLOC <> "HYDERABAD";
+
++--------+---------+------------+---------+------------+
+| EMP_ID | FNAME   | LNAME      | PROJ_ID | PCOST      |
++--------+---------+------------+---------+------------+
+|    202 | Anil    | Chaudhary  |     301 |  500000.00 |
+|    203 | Sanjana | Sinha      |     302 | 1000000.00 |
+|    205 | Pratik  | Maheshwari |     302 | 1000000.00 |
+|    206 | Preeti  | Banerjee   |     303 | 1000000.00 |
+|    210 | Riya    | Singh      |     304 |  250000.00 |
+|    208 | Meena   | Hedge      |     306 |  500000.00 |
+|    202 | Anil    | Chaudhary  |     307 | 1000000.00 |
+|    203 | Sanjana | Sinha      |     308 |  300000.00 |
+|    205 | Pratik  | Maheshwari |     308 |  300000.00 |
++--------+---------+------------+---------+------------+
+
+4. SELECT DNAME, FNAME, LNAME, DESIGNATION FROM PROJECT NATURAL JOIN DEPT JOIN EMPLOYEE WHERE PYEAR = '2020';
+Empty set (0.00 sec)
+
+5. SELECT DISTINCT DEPT_ID, DESIGNATION FROM EMPLOYEE NATURAL JOIN PROJECT WHERE PCOST > 30000;
+
++---------+-------------+
+| DEPT_ID | DESIGNATION |
++---------+-------------+
+|     105 | Prof.       |
+|     102 | Principal   |
+|     102 | Ass. Prof.  |
+|     109 | Ass. Prof.  |
+|     107 | HOD         |
+|     106 | Prof.       |
++---------+-------------+
+
+6. SELECT PNAME FROM PROJECT WHERE PYEAR = '2015';
+Empty set (0.00 sec)
+
+7. SELECT DNAME FROM DEPT WHERE DEPT_ID IN (SELECT DEPT_ID FROM EMPLOYEE GRO
+UP BY DEPT_ID HAVING COUNT(EMP_ID) = 2);
+
++-------+
+| DNAME |
++-------+
+| IT    |
++-------+
+
+8. SELECT COUNT(EMP_ID) FROM EMPLOYEE WHERE JOIN_DATE < '2009-01-01';
+
++---------------+
+| COUNT(EMP_ID) |
++---------------+
+|             3 |
++---------------+
+
+9. CREATE VIEW EDVIEW AS SELECT * FROM EMPLOYEE NATURAL JOIN DEPT;
+   SELECT * FROM EDVIEW;
+
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+| DEPT_ID | EMP_ID | FNAME   | LNAME      | DESIGNATION | SALARY    | JOIN_DATE  | DNAME       | DLOC      |
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+|     105 |    202 | Anil    | Chaudhary  | Prof.       |  77000.00 | 2005-07-25 | Electrical  | Pune      |
+|     102 |    203 | Sanjana | Sinha      | Principal   | 132000.00 | 2006-12-03 | IT          | Pune      |
+|     102 |    205 | Pratik  | Maheshwari | Ass. Prof.  |  50000.00 | 2015-11-01 | IT          | Pune      |
+|     109 |    206 | Preeti  | Banerjee   | Ass. Prof.  |  50000.00 | 2020-11-01 | Biology     | Pune      |
+|     108 |    207 | Harsh   | Bansod     | Prof.       |  70000.00 | 2017-03-18 | Mathematics | Bengaluru |
+|     106 |    208 | Meena   | Hedge      | Prof.       |  70000.00 | 2017-03-17 | Physics     | Delhi     |
+|     107 |    210 | Riya    | Singh      | HOD         |  88000.00 | 2005-05-21 | Chemistry   | Bengaluru |
++---------+--------+---------+------------+-------------+-----------+------------+-------------+-----------+
+
+10. CREATE VIEW EVIEW AS SELECT EMP_ID, FNAME, DESIGNATION FROM EMPLOYEE;
+    SELECT * FROM EVIEW;
+
++--------+---------+-------------+
+| EMP_ID | FNAME   | DESIGNATION |
++--------+---------+-------------+
+|    202 | Anil    | Prof.       |
+|    203 | Sanjana | Principal   |
+|    205 | Pratik  | Ass. Prof.  |
+|    206 | Preeti  | Ass. Prof.  |
+|    207 | Harsh   | Prof.       |
+|    208 | Meena   | Prof.       |
+|    210 | Riya    | HOD         |
++--------+---------+-------------+
+
+    INSERT INTO EVIEW VALUES (211, "Jayesh", "Prof.");
+    SELECT * FROM EVIEW;
+
++--------+---------+-------------+
+| EMP_ID | FNAME   | DESIGNATION |
++--------+---------+-------------+
+|    202 | Anil    | Prof.       |
+|    203 | Sanjana | Principal   |
+|    205 | Pratik  | Ass. Prof.  |
+|    206 | Preeti  | Ass. Prof.  |
+|    207 | Harsh   | Prof.       |
+|    208 | Meena   | Prof.       |
+|    210 | Riya    | HOD         |
+|    211 | Jayesh  | Prof.       |
++--------+---------+-------------+
+
+    UPDATE EVIEW SET DESIGNATION = "HOD' WHERE EMP_ID = 211;
+    SELECT * FROM EVIEW;
++--------+---------+-------------+
+| EMP_ID | FNAME   | DESIGNATION |
++--------+---------+-------------+
+|    202 | Anil    | Prof.       |
+|    203 | Sanjana | Principal   |
+|    205 | Pratik  | Ass. Prof.  |
+|    206 | Preeti  | Ass. Prof.  |
+|    207 | Harsh   | Prof.       |
+|    208 | Meena   | Prof.       |
+|    210 | Riya    | HOD         |
+|    211 | Jayesh  | HOD         |
++--------+---------+-------------+
+     
+    DELETE FROM EVIEW WHERE EMP_ID = 211;
+    SELECT * FROM EVIEW;
++--------+---------+-------------+
+| EMP_ID | FNAME   | DESIGNATION |
++--------+---------+-------------+
+|    202 | Anil    | Prof.       |
+|    203 | Sanjana | Principal   |
+|    205 | Pratik  | Ass. Prof.  |
+|    206 | Preeti  | Ass. Prof.  |
+|    207 | Harsh   | Prof.       |
+|    208 | Meena   | Prof.       |
+|    210 | Riya    | HOD         |
++--------+---------+-------------+
+
+    DROP VIEW EVIEW;

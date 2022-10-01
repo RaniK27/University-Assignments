@@ -1,0 +1,20 @@
+CREATE PROCEDURE proc_Grade(IN rn INT)
+    BEGIN
+    DECLARE marks INT;
+    DECLARE sname VARCHAR(30);
+    DECLARE class VARCHAR(50);
+    SELECT TOTAL_MARKS INTO marks FROM STUD_MARKS WHERE ROLL_NO = rn;
+    SELECT NAME INTO sname FROM STUD_MARKS WHERE ROLL_NO = rn;
+    IF marks>=990 AND marks<=1500 THEN
+    SET class='DISTINCTION';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    ELSEIF marks>=900 AND marks<=989 THEN
+    SET class='FIRST CLASS';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    ELSEIF marks>=825 AND marks<=899 THEN
+    SET class='HIGHER SECOND CLASS';
+    INSERT INTO RESULT VALUES(rn, sname, class);
+    END IF;
+    END //;
+
+DELIMITER ;

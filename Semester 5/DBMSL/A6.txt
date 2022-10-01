@@ -1,0 +1,122 @@
+CREATE TABLE O_EMPID(
+    -> E_ID INT PRIMARY KEY,
+    -> NAME VARCHAR(50),
+    -> DESIGNATION VARCHAR(30));
+
+INSERT INTO O_EMPID VALUES
+    -> (101, "ANKIT BHOSE", "Manager"),
+    -> (103, "SHWETHA HEDGE", "Sales Associate"),
+    -> (104, "KUNAL CHATTERJEE", "Senior Manager"),
+    -> (108, "RONAK JOSHI", "Marketing Associate"),
+    -> (111, "ANSHIKA SINGH", "Vice President");
+    
+SELECT * FROM O_EMPID;
++------+------------------+---------------------+
+| E_ID | NAME             | DESIGNATION         |
++------+------------------+---------------------+
+|  101 | ANKIT BHOSE      | Manager             |
+|  103 | SHWETHA HEDGE    | Sales Associate     |
+|  104 | KUNAL CHATTERJEE | Senior Manager      |
+|  108 | RONAK JOSHI      | Marketing Associate |
+|  111 | ANSHIKA SINGH    | Vice President      |
++------+------------------+---------------------+
+
+CREATE TABLE N_EMPID(
+    -> E_ID INT PRIMARY KEY,
+    -> NAME VARCHAR(50),
+    -> DESIGNATION VARCHAR(30));
+
+INSERT INTO N_EMPID VALUES
+    -> (102, "VEERA MAHAJAN", "Sales Associate"),
+    -> (104, "KUNAL CHATTERJEE", "Sales Associate"),
+    -> (106, "DIVYA MALHOTRA", "Senior Manager"),
+    -> (108, "RONAK JOSHI", "Marketing Associate"),
+    -> (109, "YASH TRIPATHI", "Marketing Associate");
+
+SELECT * FROM N_EMPID;
++------+------------------+---------------------+
+| E_ID | NAME             | DESIGNATION         |
++------+------------------+---------------------+
+|  102 | VEERA MAHAJAN    | Sales Associate     |
+|  104 | KUNAL CHATTERJEE | Sales Associate     |
+|  106 | DIVYA MALHOTRA   | Senior Manager      |
+|  108 | RONAK JOSHI      | Marketing Associate |
+|  109 | YASH TRIPATHI    | Marketing Associate |
++------+------------------+---------------------+
+
+DELIMITER //;
+
+CREATE PROCEDURE merge_val()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE e_id INT;
+  DECLARE name VARCHAR(50);
+  DECLARE desn VARCHAR(30);
+  DECLARE cur CURSOR FOR SELECT * FROM O_EMPID;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  OPEN cur;
+  read_loop: LOOP
+    FETCH cur INTO e_id, name, desn;
+    INSERT IGNORE INTO N_EMPID VALUES(e_id, name, desn);
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+  END LOOP;
+  CLOSE cur;
+END //;
+
+DELIMITER ;
+
+CALL merge_val();
+
+SELECT * FROM N_EMPID;
++------+------------------+---------------------+
+| E_ID | NAME             | DESIGNATION         |
++------+------------------+---------------------+
+|  101 | ANKIT BHOSE      | Manager             |
+|  102 | VEERA MAHAJAN    | Sales Associate     |
+|  103 | SHWETHA HEDGE    | Sales Associate     |
+|  104 | KUNAL CHATTERJEE | Sales Associate     |
+|  106 | DIVYA MALHOTRA   | Senior Manager      |
+|  108 | RONAK JOSHI      | Marketing Associate |
+|  109 | YASH TRIPATHI    | Marketing Associate |
+|  111 | ANSHIKA SINGH    | Vice President      |
++------+------------------+---------------------+
+
+DELIMITER //;
+
+CREATE PROCEDURE merge_val2(IN e_id1 INT)
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE e_id INT;
+  DECLARE name VARCHAR(50);
+  DECLARE desn VARCHAR(30);
+  DECLARE cur CURSOR FOR SELECT * FROM O_EMPID;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  OPEN cur;
+  read_loop: LOOP
+    FETCH cur INTO e_id, name, desn;
+    IF(e_id1 = e_id) THEN
+    	INSERT IGNORE INTO N_EMPID VALUES(e_id, name, desn);
+    END IF;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+  END LOOP;
+  CLOSE cur;
+END //;
+
+DELIMITER ;
+
+CALL merge_val2(111);
+
+SELECT * FROM N_EMPID;
++------+------------------+---------------------+
+| E_ID | NAME             | DESIGNATION         |
++------+------------------+---------------------+
+|  102 | VEERA MAHAJAN    | Sales Associate     |
+|  104 | KUNAL CHATTERJEE | Sales Associate     |
+|  106 | DIVYA MALHOTRA   | Senior Manager      |
+|  109 | YASH TRIPATHI    | Marketing Associate |
+|  111 | ANSHIKA SINGH    | Vice President      |
++------+------------------+---------------------+
