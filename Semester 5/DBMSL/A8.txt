@@ -13,6 +13,47 @@ public class jdbc
    static Connection conn = null;
    static Statement stmt = null;
    
+   public static void displayTable() throws SQLException
+   {
+	   String sql;
+	   int pid = 0;
+	   String pname = "";
+	   int pqty = 0;
+	   sql = "SELECT * FROM PRODUCT";
+	   ResultSet rs = stmt.executeQuery(sql);
+	   while(rs.next())
+	   {
+		   pid = rs.getInt("PID");
+		   pname = rs.getString("PNAME");
+		   pqty = rs.getInt("PQTY");
+		   System.out.println("PID: " + pid);
+		   System.out.println("PNAME: " + pname);
+		   System.out.println("PQTY: " + pqty);
+	   }
+	   rs.close();
+   }
+   
+   public static void insertRecord(int pid, String pname, int pqty) throws SQLException
+   {
+	   String sql;
+	   sql = "INSERT INTO PRODUCT VALUES (" + Integer.toString(pid) + ", " + pname + ", " + Integer.toString(pqty) + ")";
+	   stmt.executeUpdate(sql);
+   }
+   
+   public static void updateRecord(int pid, int pqty) throws SQLException
+   {
+	   String sql;
+	   sql = "UPDATE PRODUCT SET pqty = " + Integer.toString(pqty) + "WHERE PID = " + Integer.toString(pid);
+	   stmt.executeUpdate(sql);
+   }
+   
+   public static void deleteRecord(int pid) throws SQLException
+   {
+	   String sql;
+	   sql = "DELETE FROM PRODUCT WHERE PID = " + Integer.toString(pid);
+	   stmt.executeUpdate(sql);
+   }
+   
    public static void main(String[] args) 
    {
 	   try
@@ -41,7 +82,7 @@ public class jdbc
               System.out.println(" 1.  \tDISPLAY TABLE CONTENTS");
               System.out.println(" 2.  \tINSERT RECORD IN TABLE");
               System.out.println(" 3.  \tUPDATE RECORD IN TABLE");
-              System.out.println(" 4.  \tDELET RECORD FROM TABLE");
+              System.out.println(" 4.  \tDELETE RECORD FROM TABLE");
               System.out.println(" 5.  \tEXIT");
               System.out.println("\nPlease enter an option.\nOption: ");
               option = s.nextInt();
@@ -51,41 +92,36 @@ public class jdbc
             	  displayTable();
             	  break;
               case 2:
-            	  insertRecord();
+            	  System.out.println("Please enter the following information.\nPID: ");
+                  pid = s.nextInt();
+                  System.out.println("PNAME: ");
+                  pname = s.next();
+                  System.out.println("PQTY: ");
+                  pqty = s.nextInt();
+            	  insertRecord(pid, pname, pqty);
             	  break;
               case 3:
-            	  updateRecord();
+            	  System.out.println("Please enter the following information.\nPID: ");
+                  pid = s.nextInt();
+                  System.out.println("PQTY: ");
+                  pqty = s.nextInt();
+            	  updateRecord(pid, pqty);
             	  break;
               case 4:
-            	  deleteRecord();
+            	  System.out.println("Please enter the following information.\nPID: ");
+                  pid = s.nextInt();
+            	  deleteRecord(pid);
             	  break;
               case 5:
             	  System.out.println("OPTION 5: EXIT");
             	  System.out.println("Exiting...");
             	  s.close();
+            	  System.exit(0);
             	  return;
               }
-              System.out.println("do you want to continue? (Y/N)");
+              System.out.println("Do you want to continue? (Y/N)");
               
-          }while(ch == 'Y' || ch = 'y');
-	      
-	
-	      //STEP 5: Extract data from result set
-	      while(rs.next()){
-	         //Retrieve by column name
-	         int id  = rs.getInt("id");
-	         int age = rs.getInt("age");
-	         String first = rs.getString("first");
-	         String last = rs.getString("last");
-	
-	         //Display values
-	         System.out.print("ID: " + id);
-	         System.out.print(", Age: " + age);
-	         System.out.print(", First: " + first);
-	         System.out.println(", Last: " + last);
-	      }
-	      //STEP 6: Clean-up environment
-	      rs.close();
+          }while(ch == 'Y' || ch == 'y');
 	      stmt.close();
 	      conn.close();
 	   }catch(SQLException se){
@@ -108,6 +144,5 @@ public class jdbc
 		         se.printStackTrace();
 		      }//end finally try
 		   }//end try
-		   System.out.println("Goodbye!");
 	}//end main
 }
