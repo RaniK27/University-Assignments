@@ -1,0 +1,74 @@
+db.createCollection('Library");
+
+db.Library.insertMany([
+... {"isbn": 101, "title": "Matilda", "author": "Roald Dahl", "copies": 5},
+... {"isbn": 102, "title": "Java for Beginners", "author": "John Smith", "copies": 3},
+... {"isbn": 103, "title": "War and Peace", "author": "Leo Tolstoy", "copies": 1},
+... {"isbn": 104, "title": "Pride and Prejudice", "author": "Jane Austen", "copies": 7},
+... {"isbn": 105, "title": "C++", "author": "Erica Jennings", "copies": 3}]);
+
+db.Library.find();
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a73"), "isbn" : 101, "title" : "Matilda", "author" : "Roald Dahl", "copies" : 5 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a74"), "isbn" : 102, "title" : "Java for Beginners", "author" : "John Smith", "copies" : 3 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a75"), "isbn" : 103, "title" : "War and Peace", "author" : "Leo Tolstoy", "copies" : 1 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a76"), "isbn" : 104, "title" : "Pride and Prejudice", "author" : "Jane Austen", "copies" : 7 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a77"), "isbn" : 105, "title" : "C++", "author" : "Erica Jennings", "copies" : 3 }
+
+db.Library.find().pretty();
+{
+	"_id" : ObjectId("6361f33d8f91afc88ce43a73"),
+	"isbn" : 101,
+	"title" : "Matilda",
+	"author" : "Roald Dahl",
+	"copies" : 5
+}
+{
+	"_id" : ObjectId("6361f33d8f91afc88ce43a74"),
+	"isbn" : 102,
+	"title" : "Java for Beginners",
+	"author" : "John Smith",
+	"copies" : 3
+}
+{
+	"_id" : ObjectId("6361f33d8f91afc88ce43a75"),
+	"isbn" : 103,
+	"title" : "War and Peace",
+	"author" : "Leo Tolstoy",
+	"copies" : 1
+}
+{
+	"_id" : ObjectId("6361f33d8f91afc88ce43a76"),
+	"isbn" : 104,
+	"title" : "Pride and Prejudice",
+	"author" : "Jane Austen",
+	"copies" : 7
+}
+{
+	"_id" : ObjectId("6361f33d8f91afc88ce43a77"),
+	"isbn" : 105,
+	"title" : "C++",
+	"author" : "Erica Jennings",
+	"copies" : 3
+}
+
+db.Library.update({"isbn": 103},{$set: {"copies": 2}});
+
+db.Library.find();
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a73"), "isbn" : 101, "title" : "Matilda", "author" : "Roald Dahl", "copies" : 5 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a74"), "isbn" : 102, "title" : "Java for Beginners", "author" : "John Smith", "copies" : 3 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a75"), "isbn" : 103, "title" : "War and Peace", "author" : "Leo Tolstoy", "copies" : 2 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a76"), "isbn" : 104, "title" : "Pride and Prejudice", "author" : "Jane Austen", "copies" : 7 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a77"), "isbn" : 105, "title" : "C++", "author" : "Erica Jennings", "copies" : 3 }
+
+db.Library.remove({"isbn": 102});
+
+db.Library.find();
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a73"), "isbn" : 101, "title" : "Matilda", "author" : "Roald Dahl", "copies" : 5 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a75"), "isbn" : 103, "title" : "War and Peace", "author" : "Leo Tolstoy", "copies" : 2 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a76"), "isbn" : 104, "title" : "Pride and Prejudice", "author" : "Jane Austen", "copies" : 7 }
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a77"), "isbn" : 105, "title" : "C++", "author" : "Erica Jennings", "copies" : 3 }
+
+db.Library.find({"isbn": 103});
+{ "_id" : ObjectId("6361f33d8f91afc88ce43a75"), "isbn" : 103, "title" : "War and Peace", "author" : "Leo Tolstoy", "copies" : 2 }
+
+
