@@ -1,0 +1,34 @@
+ db.createCollection('student');
+
+ db.student.insert([
+{'id': 101, 'name': 'Aryan', 'marks': 92},
+{'id': 102, 'name': 'Riya', 'marks': 97},
+{'id': 103, 'name': 'Swati', 'marks': 90},
+{'id': 104, 'name': 'Kunal', 'marks': 87},
+{'id': 105, 'name': 'Anshu', 'marks': 83}]);
+
+db.student.find();
+
+db.student.find().pretty();
+
+db.student.update({'id': 101}, {$set: {'marks': 88}});
+
+db.student.remove({'id': 101});
+
+db.student.find({'id': 102});
+
+db.student.insert([
+{'id': 101, 'name': 'Aryan', 'marks': 87},
+{'id': 106, 'name': 'Nirbha', 'marks': 84}]);
+
+db.student.find({$and:[{'name': 'Aryan'}, {'marks': 87}]});
+
+db.student.find({$or:[{'name': 'Aryan'}, {'marks': 87}]});
+
+db.student.find({'marks': {$gte: 85}});
+
+db.student.find({'marks': {$eq: 84}});
+
+db.student.save({ "_id" : ObjectId("6368252af51c40f6c1c4de58"), "id" : 102, "name" : "Riya", "marks" : 97 });
+
+db.student.deleteOne({'id': 101});
