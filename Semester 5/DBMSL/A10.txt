@@ -1,0 +1,157 @@
+db.student.getIndexes();
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.student"
+        }
+]
+
+db.student.createIndex({'id': 1});
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+
+db.student.getIndexes();
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "id" : 1
+                },
+                "name" : "id_1",
+                "ns" : "test.student"
+        }
+]
+
+db.student.createIndex({'name': 1});
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "ok" : 1
+}
+
+db.student.getIndexes();
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "id" : 1
+                },
+                "name" : "id_1",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1
+                },
+                "name" : "name_1",
+                "ns" : "test.student"
+        }
+]
+
+db.student.dropIndex('name_1');
+
+db.student.getIndexes();
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "id" : 1
+                },
+                "name" : "id_1",
+                "ns" : "test.student"
+        }
+]
+
+db.student.find().sort({'id':-1});
+{ "_id" : ObjectId("63682b84f51c40f6c1c4de5d"), "id" : 106, "name" : "Nirbha", "marks" : 84 }
+{ "_id" : ObjectId("6368252af51c40f6c1c4de5b"), "id" : 105, "name" : "Anshu", "marks" : 83 }
+{ "_id" : ObjectId("6368252af51c40f6c1c4de5a"), "id" : 104, "name" : "Kunal", "marks" : 87 }
+{ "_id" : ObjectId("6368252af51c40f6c1c4de59"), "id" : 103, "name" : "Swati", "marks" : 90 }
+{ "_id" : ObjectId("6368252af51c40f6c1c4de58"), "id" : 102, "name" : "Riya", "marks" : 97 }
+
+db.student.createIndex({'name': 1}, {unique: true});
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "ok" : 1
+}
+
+db.student.getIndexes();
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "id" : 1
+                },
+                "name" : "id_1",
+                "ns" : "test.student"
+        },
+        {
+                "v" : 2,
+                "unique" : true,
+                "key" : {
+                        "name" : 1
+                },
+                "name" : "name_1",
+                "ns" : "test.student"
+        }
+]
+
+db.student.insert({'id': 107, 'name': 'Riya', 'marks': 82});
+WriteResult({
+        "nInserted" : 0,
+        "writeError" : {
+                "code" : 11000,
+                "errmsg" : "E11000 duplicate key error collection: test.student index: name_1 dup ke
+y: { name: \"Riya\" }"
+        }
+})
+
+db.student.aggregate([{$group:{_id: '$name', marks: {$first: '$marks'}}}]);
+
+db.student.aggregate([{$group:{_id: '$name', marks: {$last: '$marks'}}}]);
+
+db.student.aggregate([{$group:{_id: '$name', marks: {$min: '$marks'}}}]);
