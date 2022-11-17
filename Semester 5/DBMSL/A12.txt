@@ -1,0 +1,111 @@
+package jbdc;
+
+import com.mongodb.*;
+import java.util.Scanner;
+
+public class jdbc 
+{
+
+	static MongoClient mongo = new MongoClient("localhost", 27017);
+	static DB db = mongo.getDB("t31170db");
+	static DBCollection col = db.getCollection("students");
+	static Scanner s = new Scanner(System.in);
+	
+	public static void insertR(int rec, BasicDBObject d[])
+	{
+		int rn, marks;
+		String name;
+		System.out.println("Please enter the following information.");
+		for(int i = 0; i < rec; i++)
+		{
+			System.out.println("Roll No.: ");
+			rn = s.nextInt();
+			System.out.println("Name: ");
+			name = s.next();
+			System.out.println("Marks: ");
+			marks = s.nextInt();
+			d[i] = new BasicDBObject("roll", rn).append("name", name).append("marks", marks);
+			col.insert(d[i]);
+		}
+	}
+	
+	public static void updateR(int rn, String name, int marks, BasicDBObject d[])
+	{
+		int val = rn % 10;
+		BasicDBObject dnew = new BasicDBObject("roll", rn).append("name", name).append("marks", marks);
+		BasicDBObject dup = new BasicDBObject("$set", dnew);
+		col.update(d[val-1], dup);
+	}
+	
+	public static void displayC()
+	{
+		DBCursor cursor = col.find();
+		while(cursor.hasNext())
+		{
+			System.out.println(cursor.next());
+		}
+	}
+	
+	public static void deleteR(int rn, BasicDBObject d[])
+	{
+		int val = rn % 10;
+		col.remove(d[val-1]);
+	}
+	public static void main(String[] args) 
+	{
+		BasicDBObject d[] = new BasicDBObject[20];
+		int op = 0;
+		while(op != 5)
+		{
+			System.out.println("\nS.NO.\tOPTION");
+			System.out.println("  1. \tInsert Records");
+			System.out.println("  2. \tUpdate Record");
+			System.out.println("  3. \tDisplay Collection");
+			System.out.println("  4. \tDelete Record");
+			System.out.println("  5. \tExit");
+			System.out.println("\nPlease enter an option: ");
+			op = s.nextInt();
+			switch(op)
+			{
+			case 1:
+				System.out.println("Option 1: Insert Records");
+				int rec;
+				System.out.println("Please enter the number of records you would like to insert.\nRecords: ");
+				rec = s.nextInt();
+				insertR(rec, d);
+				break;
+			case 2:
+				System.out.println("Option 2: Update Record");
+				System.out.println("Please enter the following information.");
+				int rn, marks;
+				String name;
+				System.out.println("Roll No.: ");
+				rn = s.nextInt();
+				System.out.println("Name: ");
+				name = s.next();
+				System.out.println("Marks: ");
+				marks = s.nextInt();
+				updateR(rn, name, marks, d);
+				break;
+			case 3:
+				System.out.println("Option 3: Display Collection");
+				displayC();
+				break;
+			case 4:
+				System.out.println("Option 4: Delete Record");
+				System.out.println("Please enter the roll number of the record you want to delete from collection.\nRoll No.: ");
+				int roll = s.nextInt();
+				deleteR(roll, d);
+				break;
+			case 5:
+				System.out.println("Option 5: Exit");
+				System.out.println("Exiting...");
+				System.exit(0);
+				break;
+			default:
+				System.out.println("Invalid Option");
+				break;
+			}
+		}
+	}
+}
