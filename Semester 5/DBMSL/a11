@@ -1,5 +1,0 @@
-var mapFunc = function(){emit(this.name,1)}
-var redFunc = function(key,values){return Array.sum(values);}
-db.student.mapReduce(mapFunc, redFunc, {out:"name_total"})
-db.name_total.find();
-**Create multiple entries of same name
