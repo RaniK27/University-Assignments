@@ -221,45 +221,41 @@ class PageReplacement{
     	
     }
     
-    public static void main(String[] args) throws IOException{
-    	try (Scanner sc = new Scanner(System.in)) {
-            PageReplacement obj = new PageReplacement();
-            //to read from the cmd
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            
-            System.out.print("Please enter all pages required by program in order: ");
-            String script = br.readLine();
-            obj.line = script.split(" ");
-            int choice = 0;
-            while(choice != -1)
-            {
-            	System.out.println("\nMENU\n1. FIFO\n2. OPTIMAL\n3. LRU\n-1. EXIT");
-            	System.out.print("Enter your choice from menu: ");
-            	choice = sc.nextInt();
-            	switch(choice)
-            	{
-            	case 1:
-            		obj.FIFO();
-            		break;
-            		
-            	case 2:
-            		obj.OPT();
-            		break;
-            		
-            	case 3:
-            		obj.LRU();
-            		break;
-            		
-            	case -1:
-            		System.out.println("Thank you");
-            		break;
-            	}
+    public static void main(String[] args) throws IOException
+    {
+        PageReplacement obj = new PageReplacement();
+        //to read from the cmd
+        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Please enter all pages required by program in order: ");
+        String script = br.readLine();
+        obj.line = script.split(" ");
+        int choice = 0;
+        while(choice != -1)
+        {
+        	System.out.println("\nMENU\n1. FIFO\n2. OPTIMAL\n3. LRU\n-1. EXIT");
+        	System.out.print("Enter your choice from menu: ");
+        	choice = sc.nextInt();
+        	switch(choice)
+        	{
+        	case 1:
+        		obj.FIFO();
+        		break;
+        	case 2:
+        		obj.OPT();
+        		break;
+        	case 3:
+        		obj.LRU();
+        		break;
+        	case -1:
+        		System.out.println("Thank you");
+        		break;
+        	default:
+        	System.out.println("Invalid Input");
             }
         }
-        catch (Exception e) {
-            System.out.println("Please enter valid values!\n"+e);
-        }
-        
     }
 }
+       
+        
+    
