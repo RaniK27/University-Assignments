@@ -1,7 +1,5 @@
 import java.util.Scanner;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 class PageReplacement{
     String frame[];
@@ -18,7 +16,7 @@ class PageReplacement{
             
         }
         catch(Exception e){
-            System.out.println("Please enter an integer number.");
+            System.out.println("Please enter a valid number.");
             System.exit(0);
         }
     }
@@ -227,9 +225,8 @@ class PageReplacement{
     	try (Scanner sc = new Scanner(System.in)) {
             PageReplacement obj = new PageReplacement();
             //to read from the cmd
-            InputStreamReader ir = new InputStreamReader(System.in);
-            //to atomize the cmd
-            BufferedReader br = new BufferedReader(ir);
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             
             System.out.print("Please enter all pages required by program in order: ");
             String script = br.readLine();
