@@ -4,8 +4,8 @@ import java.io.*;
 class PageReplacement{
     String frame[];
     String line[];
-    Scanner sc = new Scanner(System.in);
     int front, back, faults;
+    Scanner sc = new Scanner(System.in);
     
     //default constructor
     PageReplacement()
