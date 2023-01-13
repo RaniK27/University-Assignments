@@ -1,4 +1,4 @@
-db.createCollection('Library");
+db.createCollection("Library");
 
 db.Library.insertMany([
 ... {"isbn": 101, "title": "Matilda", "author": "Roald Dahl", "copies": 5},
