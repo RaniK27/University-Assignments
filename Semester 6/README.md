@@ -1,4 +1,4 @@
-## [Semester 6](https://github.com/RaniK27/University-Assignments/tree/main/Semester%206)
+## [Semester 6]
 
 ### [Data Science and Big Data Analytics Laboratory](https://github.com/RaniK27/University-Assignments/tree/main/Semester%206/DSBDAL)
 
