@@ -1,6 +1,6 @@
-## [Semester 6]
+# Semester 6
 
-### [Data Science and Big Data Analytics Laboratory](https://github.com/RaniK27/University-Assignments/tree/main/Semester%206/DSBDAL)
+## [Data Science and Big Data Analytics Laboratory](https://github.com/RaniK27/University-Assignments/tree/main/Semester%206/DSBDAL)
 
 | **Experiment Folder** | **Experiment Aim** |
 |:---:|---|
@@ -19,7 +19,7 @@
 | **[B3](#)** | Locate dataset (eg. sample_weather.txt) for working on weather data which reads the text input files and finds average for temperature, dew point and wind speed. |
 | **[B4](#)** | Write a simple program in SCALA using Apache Spark framework. |
 
-### [Artificial Intelligence (Laboratory Practice II)](Semester%206/LP2)
+## [Artificial Intelligence (Laboratory Practice II)](Semester%206/LP2)
 
 | **Experiment Folder** | **Experiment Aim** |
 |:---:|---|
