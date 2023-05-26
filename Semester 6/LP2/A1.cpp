@@ -1,116 +1,65 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-class Traversal
-{
-    public:
-    void dfs(int idx, vector<vector<int>> &graph, int vis[])
-    {
-        cout << idx << " ";
-        vis[idx] = true;
-        int n = graph[idx].size();
-        
-        for(int i = 0; i < n; i++)
-        {
-            if(graph[idx][i] == 1 && vis[i] == 0)
-            {
-                dfs(i, graph, vis);
-            }
+class Graph{
+    int N;
+    vector<int> *graph;
+public:
+    Graph(int N){
+        this->N = N;
+        graph = new vector<int>[N];
+    }
+
+    void addEdge(int u, int v){
+        graph[u].push_back(v);
+    }
+
+    void DFS(int start, vector<bool>& visited){
+        if(visited[start]) return;
+        visited[start] = true;
+        cout << start << " ";
+        for(auto& adj : graph[start]){
+            DFS(adj, visited);
         }
     }
 
-    void bfs(vector<vector<int>> & graph, int vis[], queue<int> &q)
-    {
-        if(q.empty())
-            return;
-        int node = q.front();
-        q.pop();
-        cout << node << " ";
-        int n = graph[node].size();
-        for(int i = 0; i < n; i++)
-        {
-            if(vis[i] == 0)
-            {
-                vis[i] = true;
-                q.push(i);
+    void BFS(int start){
+        vector<int> traversal;
+        queue<int> q;
+        q.push(start);
+        vector<bool> visited(N+1, false);
+        visited[start] = true;
+        while(!q.empty()){
+            int curNode = q.front();
+            traversal.push_back(curNode);
+            q.pop();
+            for(int adjNode : graph[curNode]){
+                if(visited[adjNode]) continue;
+                visited[adjNode] = true;
+                q.push(adjNode);
             }
         }
-        bfs(graph, vis, q);
-    }  
+        for(auto node : traversal){
+            cout << node << " ";
+        }
+    }
 };
 
+int main(){
+    int N, E, u, v; 
+    cout << "Enter number of nodes: "; cin >> N;
+    cout << "Enter number of edges: "; cin >> E;
 
-
-int main()
-{ 
-    int n, e;
-    Traversal t; 
-    cout <<"Please enter the number of nodes in graph: ";
-    cin >> n; 
-    cout <<"\nPlease enter the of edges in graph: ";
-    cin>> e;
-    vector<vector<int>> graph(n, vector<int>(n, 0))
-    for(int i = 0; i < e; i++)
-    {
-        int u, v;
-        cout << "Enter source and destination nodde: ";
+    Graph g(N);
+    cout << "Enter the edges:\n";
+    for(int e=0; e<E; e++){
         cin >> u >> v;
-        //unidirectional graph
-        graph[u][v] = 1;
-        graph[v][u] = 1;
+        g.addEdge(u, v);
     }
-    cout << "\nAdjacency Matrix: \n";
-    cout << "        ";
-    for(int i = 0; i <n ; i++)
-        cout << i << " ";
-    cout << endl;
-    for(int i = 0; i < n; i++)
-    {
-        cout << "node " << i << ": ";
-        for(int j = 0; j < n; j++)
-        {
-            cout << graph[i][j] << " ";
-        }
-        cout << endl;
-    }
-    
-    int choice;
-    
-    do
-    {
-        cout <<"\n1.DFS\n2.BFS\n3.Exit\n";
-        cout << "\nEnter your choice: ";
-        cin >> choice;
-        
-        switch(choice)
-        {
-            case 1:
-                {int start;
-                cout << "Enter start node: ";
-                int vis1[n] = {0};
-                cin >> start;
-                cout << "\nDFS of the graph: ";
-                t.dfs(start, graph, vis1);
-                break;}
-                
-            case 2:
-                {int start;
-                cout << "Enter start node: ";
-                cin >> start;
-                int vis2[n] = {0};
-                queue<int> q;
-                q.push(start);
-                vis2[start] = 1;
-                cout << "\nBFS of the graph: ";
-                t.bfs(graph, vis2, q);
-                break;}
-            
-            case 3:
-                exit(0);  
-            default:
-                break;
-        }
-    }while(choice != 3);
-    
-    return 0;
+    vector<bool> visited(N, false);
+    cout << "\nDFS traversal\n";
+    g.DFS(0, visited);
+
+    cout << "\nBFS traversal\n";
+    g.BFS(0);
 }
