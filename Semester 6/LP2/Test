@@ -1,0 +1,27 @@
+
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ChangeTexture : MonoBehaviour
+{
+[SerializeField]
+private GameObject cube;
+
+[SerializeField]
+private Texture[] texture;
+
+private Renderer cubeRenderer
+
+private int randomTextureIndex
+
+void Start()
+{
+cubeRenderer = cube.GetComponent<Renderer>();
+gameObject.getComponent<Button>().onClick.AddListener(ChangeCubeTexture);
+}
+
+private void ChangeCubeTexture()
+{
+randomTextureIndex = Random.Range(0, textures.Length);
+cubeRenderer.material.mainTexture = textures[randomTextureIndex];
+
